@@ -7,3 +7,9 @@ List of Examples for Open Frameworks
 2 ) use a struct "ColorPoint" to record the color and position of mouse movement
 3 ) draw into an FBO and mirror
 4 ) use a limited color palette
+
+02_Animator
+1 ) allocate each FBO 
+2 ) on mousePressed draw into FBO
+3 ) clear FBOs
+
