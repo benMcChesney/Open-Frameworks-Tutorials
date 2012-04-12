@@ -6,7 +6,6 @@ void testApp::setup(){
     //initialize values
     maxFrames = 30 ; 
     currentFrame = 0 ; 
-    bPressed = false ; 
 
     for ( int i = 0; i < maxFrames ; i++ ) 
     {
@@ -23,7 +22,8 @@ void testApp::setup(){
     
     ofBackground( 255 , 255 , 255 ) ; 
     
-    lastMouse = ofPoint ( 0 , 0 ) ; 
+    //2
+    //lastMouse = ofPoint ( 0 , 0 ) ; 
 }
 
 //--------------------------------------------------------------
@@ -41,10 +41,12 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
+        //2
+        /*
         //record the current mouse position
         ofPoint mousePos = ofPoint( mouseX , mouseY ) ; 
         float mouseDistance = ofDist( mousePos.x , mousePos.y , lastMouse.x , lastMouse.y ) + 15.0f ;    
-
+         */
     
         ofSetColor( 255 , 255 , 255 ) ; 
         //Begin recording the FBO
@@ -53,17 +55,25 @@ void testApp::draw(){
         //redraw the fbo into itself
         frames[currentFrame].draw(0 , 0 ) ; 
     
-        if ( bPressed == true ) 
+        if ( ofGetMousePressed() == true ) 
         {
-            ofSetColor ( randomColor ) ; 
-            ofCircle( mouseX , mouseY , mouseDistance ) ; 
+            //2
+            //ofSetColor ( randomColor ) ; 
+            
+            ofSetColor ( 15 , 15 , 15 ) ; 
+            ofCircle( mouseX , mouseY , 14.0f ) ; 
+            //2
+            //ofCircle( mouseX , mouseY , mouseDistance ) ; 
         }
         
+        //stop drawing
         frames[currentFrame].end() ; 
     
         ofSetColor ( 255 , 255 , 255 ) ; 
         frames[currentFrame].draw(0 , 0 ) ;
-        lastMouse = mousePos ; 
+    
+        //2
+        //lastMouse = mousePos ; 
     
 }
 
@@ -82,6 +92,8 @@ void testApp::resetAllFbos()
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
 {    
+    //This function listens for keyboardEvents
+    // Map the "R" key to clearing all the FBOs
     switch ( key) 
     {
         case 'r' :
@@ -111,14 +123,14 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    bPressed = true ; 
+    //2
     //create a random color
-    randomColor = ofColor ( ofRandom ( 255 ) , ofRandom ( 255 ) , ofRandom( 255 ) ) ; 
+    //randomColor = ofColor ( ofRandom ( 255 ) , ofRandom ( 255 ) , ofRandom( 255 ) ) ; 
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-    bPressed = false ; 
+
 }
 
 //--------------------------------------------------------------

@@ -22,13 +22,13 @@ class testApp : public ofBaseApp{
         int maxFrames ;             //total frames to loop
         int currentFrame ;          //current index
     
-        bool bPressed ;             //track if mouse is dragging
-    
         vector<ofFbo> frames ;      //keep all of our FBOs in a vector
-    
         void resetAllFbos() ;       //easy reset
-    
+        
+        /*
+        //2
         ofPoint lastMouse ; 
         ofColor randomColor ;
+         */
 		
 };

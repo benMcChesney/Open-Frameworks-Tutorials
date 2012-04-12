@@ -13,6 +13,7 @@ void testApp::setup(){
     //ofBackground ( R , G , B ) 
     ofBackground( 15 , 15 , 15 ) ; 
     
+    /*
     //2
     //ofSetVerticalSync caps the framerate at the refresh rate of your monitor
     ofSetVerticalSync( true ) ; 
@@ -26,6 +27,12 @@ void testApp::setup(){
     colorPool.push_back( ofColor (  190, 235, 159) ) ; 
     colorPool.push_back( ofColor (  121, 189, 143) ) ; 
     colorPool.push_back( ofColor (  0, 163, 136) ) ;
+     */
+    
+    //1
+    //This will limit the framerate and prevent screen tearing, a problem
+    //that can easily occur in openGL
+    ofSetVerticalSync( true ) ; 
 }
 
 //--------------------------------------------------------------
@@ -36,6 +43,7 @@ void testApp::update(){
     //of also has a string conversion utility ofToString( ) 
     ofSetWindowTitle( ofToString( ofGetFrameRate() ) ) ; 
     
+    /*
     //2
     //Update
     colorPoint cp ; 
@@ -55,34 +63,41 @@ void testApp::update(){
     }
     
     points.push_back( cp ) ; 
+     */
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
     
+    /*
     //3
     //to record into an FBO call begin() 
     ofSetColor ( 255 , 255 , 255 ) ; 
     mirrorFbo.begin() ; 
+    */
     
+    //1
     //Draw the background
     ofSetColor ( 0 , 0, 0 ) ; 
     ofRect( 0 , 0 , ofGetWidth() , ofGetHeight() ) ; 
 
+    //1
     //Let's to scale the scene and then flip it for a kaleidscope effect
     //Push and pop are modifiers that effect everything drawn already in the draw() loop
     ofPushMatrix() ; 
               
-        ofScale ( .5f , .5f , 1 ) ;
+        
         //1
         //Before anything gets drawn we have to set the color for OF
         //ofSetColor( r , g , b )
-        ofSetColor( 0 , 255 , 0 ) ; 
-
+        ofSetColor( 0 , ofRandom( 125 , 255 ) , ofRandom( 125 , 255 ) ) ; 
+        
         //Now we draw a circle
-        //ofCircle ( x , y , radius ) ; 
-        //ofCircle ( mouseX , mouseY , 25 ) ; 
+        ofCircle ( mouseX , mouseY , 25 ) ; 
 
+        /*
+        //3
+        ofScale ( .5f , .5f , 1 ) ;
         //2
         //Iterate and draw all the circles
         for ( int i = 0 ; i < points.size() ; i++ ) 
@@ -90,12 +105,16 @@ void testApp::draw(){
             ofSetColor ( points[i].color ); 
             ofCircle ( points[i].position.x , points[i].position.y , points[i].radius ) ; 
         }
+    */
     
     //End scaling the scene
     ofPopMatrix() ; 
     
+     /*
+    //3
     //end the recording
     mirrorFbo.end( ) ; 
+    
     
     //Now we move the whole scene to the middle so the FBOs can be flipped and still drawn at 0 , 0 
     ofPushMatrix() ;
@@ -123,18 +142,23 @@ void testApp::draw(){
             ofScale( -1 , -1 , 1 ) ; 
             mirrorFbo.draw( 0 , 0 ) ; 
         ofPopMatrix() ; 
+    */
     ofPopMatrix() ; 
 }
 
+/*
 ofColor testApp::getRandomColor( ) 
 {
     int randomIndex = ofRandom ( colorPool.size() ) ; 
     return colorPool[ randomIndex ] ; 
 }
+*/
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
     
+    /*
+    //3
     //Extra
     switch ( key ) 
     {
@@ -151,6 +175,7 @@ void testApp::keyPressed(int key){
 
             break ; 
     }
+     */
     
 }
 

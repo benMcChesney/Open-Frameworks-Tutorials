@@ -19,7 +19,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-    
+        /*
         //2
         struct colorPoint {
             ofColor color ;
@@ -39,5 +39,5 @@ class testApp : public ofBaseApp{
     
         vector<ofColor> colorPool ; 
         ofColor getRandomColor ( ) ; 
-
+        */
 };
