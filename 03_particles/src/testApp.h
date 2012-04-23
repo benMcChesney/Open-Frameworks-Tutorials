@@ -3,40 +3,40 @@
 #include "ofMain.h"
 #include "Particle.h"
 
+//#define STEP2 2 
+//#define STEP3 3
+
 class testApp : public ofBaseApp{
 
 	public:
 		void setup();
 		void update();
 		void draw();
-
+        
 		void keyPressed  (int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
     
         ofImage sourceImage ; 
 
         int sampling ;                  //pixels to skip
         vector<Particle> particles ;    //vector to store pixels
         
-        //2
-        
-        //Spring and Sink Factors
+#ifdef STEP2
+        ///////////////////
+        //     STEP 2    //
+        ///////////////////
         float forceRadius ;             //radius of repellent/attraction force
         float friction ;                //damping to slow the particles down
-        float springFactor ;          //how much the particle "springs" back to origin   
+        float springFactor ;            //how much the particle "springs" back to it's origin   
+        ofFbo fbo ;                     //Let's add in some alpha trails for things to get awesome
+#endif
     
-        //3
-        ofVideoPlayer video ;
-        void updateParticlePixels() ; 
-        ofFbo fbo ;
-    
-        bool bDrawTriangles ;
+#ifdef STEP3
+        ///////////////////
+        //     STEP 3    //
+        ///////////////////
+        ofVideoPlayer video ;           //OF has a core video player that's based off of quicktime or gstreamer
+        void updateParticlePixels() ;   //Special method to update the pixel color from the video
+        bool bDrawTriangles ;           //OPENGL drawing modes can have very different results
+#endif
 		
 };

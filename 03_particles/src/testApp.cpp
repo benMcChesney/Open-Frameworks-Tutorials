@@ -7,17 +7,13 @@ void testApp::setup(){
 
     //Black background
     ofBackground( 0 , 0, 0 ) ; 
-    //Prevent Screen Tearing
     ofSetVerticalSync( true ) ; 
     ofSetFrameRate( 60 ) ; 
 
     //Calculate the total number
     //numParticles = ( sourceImage.width * sourceImage.height ) / sampling ; 
     
-    //Set the spring parameters
-    forceRadius = 45 ; 
-    friction = 0.85 ; 
-    springFactor = 0.12 ; 
+  
     
     //Loading our image is really simple
     bool bLoadedOK = sourceImage.loadImage( "abstractImage.jpg" ) ; 
@@ -30,21 +26,20 @@ void testApp::setup(){
     //this is the number of pixels to skip when making particles
     sampling = 2 ;
     
-    //Retrieve the pixels from the loaded image
-    //An Image is, at it's core, an ordered collection of unsigned chars ( 0 - 255 ) 
-    //unsigned char * pixels = sourceImage.getPixels() ;
-    
+#ifndef STEP3
     //Populate particles for the first time 
     //store width and height for optimization and clarity
     int w = sourceImage.width ; 
     int h = sourceImage.height ;
     
-    
     //offsets to center the particles on screen
     int xOffset = ( ofGetWidth() - w ) / 2 ; 
     int yOffset = ( ofGetHeight() - h ) / 2 ;
     
-    /*
+    //Retrieve the pixels from the loaded image
+    //An image is, at it's core, an ordered collection of unsigned chars ( 0 - 255 ) 
+    unsigned char * pixels = sourceImage.getPixels() ;
+    
     //Loop through all the rows
     for ( int x = 0 ; x < w ; x+=sampling ) 
     {
@@ -62,24 +57,38 @@ void testApp::setup(){
             particles.push_back( Particle ( ofPoint ( x + xOffset , y + yOffset ) , color ) ) ;  
         }
     }
-    */
-    //2
+#endif
+#ifdef STEP2
+    ///////////////////
+    //     STEP 2    //
+    ///////////////////
+    //Set the spring parameters
+    forceRadius = 45 ; 
+    friction = 0.85 ; 
+    springFactor = 0.12 ; 
+    
     fbo.allocate ( ofGetWidth() , ofGetHeight() ) ; 
     ofClear( 0 , 0 , 0, 1 ) ; 
+#endif
 
-    //3 Set the particles to a video !
+#ifdef STEP3
+    ///////////////////
+    //     STEP 3    //
+    ///////////////////
+    //Initialize the video particle parameters
     video.loadMovie( "yelle_loop.mov" ) ; 
     video.play() ; 
     video.update() ; 
     
-    w = video.getWidth() ; 
-    h = video.getHeight() ;
+    int w = video.getWidth() ; 
+    int h = video.getHeight() ;
 
     unsigned char * pixels = video.getPixels() ; 
     
     //offsets to center the particles on screen
-    xOffset = (ofGetWidth() - w ) /2 ; 
-    yOffset = (ofGetHeight() - h ) * 0.825f ;
+    int xOffset = (ofGetWidth() - w ) /2 ; 
+    //We're drawing the actual video too so we'll bump down where the video pixels are drawn too
+    int yOffset = (ofGetHeight() - h ) * 0.825f ;
     
     //Loop through all the rows
     for ( int x = 0 ; x < w ; x+=sampling ) 
@@ -100,6 +109,7 @@ void testApp::setup(){
     }
 
     bDrawTriangles = false ; 
+#endif
 }
 
 //--------------------------------------------------------------
@@ -108,8 +118,10 @@ void testApp::update()
   
     ofSetWindowTitle( ofToString ( ofGetFrameRate() ) ) ; 
     
-
-    //2
+#ifdef STEP2
+    ///////////////////
+    //     STEP 2    //
+    ///////////////////
     ofPoint diff ;          //Difference between particle and mouse
     float dist ;            //distance from particle to mouse ( as the crow flies ) 
     float ratio ;           //Ratio of how strong the effect is = 1 + (-dist/maxDistance) ;
@@ -138,20 +150,29 @@ void testApp::update()
                 p->acceleration += ( diff * ratio ) ; 
         }
         
+        //Easy OF helper utility to see if a keyboard key is currently pressed
         if ( ofGetKeyPressed() ) 
         {
+            //Overloaded operators allow us to create custom operators for classes
+            //making vector math way easier than in AS3 !
             //Move back to the original position
-            p->acceleration.x += springFactor * (p->spawnPoint.x - p->position.x);
-            p->acceleration.y += springFactor * (p->spawnPoint.y - p->position.y) ;
+            ofPoint diff = p->spawnPoint - p->position ; 
+            p->acceleration += ( springFactor * diff ) ; 
         }
         
         p->velocity += p->acceleration * ratio ; 
         p->position += p->velocity ; 
     }
+#endif
     
-    //3
+#ifdef STEP3
+    ///////////////////
+    //     STEP 3    //
+    ///////////////////
+    // We have to manually update the video ! It doesn't know to update itself
     video.update() ; 
     updateParticlePixels() ; 
+#endif
     
 }
 
@@ -160,39 +181,66 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
-    ofSetColor(255, 255, 255) ; 
+
+#ifdef STEP3
+    ofSetColor( ofColor::white )  ; 
     video.draw ( ofGetWidth() / 2 + video.getWidth() / -2 , 25 ) ; 
+#endif
+    
     //Begin the openGL Drawing Mode
     //this will draw a small point at each vertex we define
      ofEnableAlphaBlending() ; 
     
-    //2
+#ifdef STEP2
+    ///////////////////
+    //     STEP 2    //
+    ///////////////////
     fbo.begin() ;    
+        //to get the trail effect we draw a very faint rectangle the size of the screen and the color of the background
         ofSetColor( 0 , 0 , 0, 6 ) ; 
         ofRect( 0 , 0 , ofGetWidth() , ofGetHeight() ) ;  
+#endif
     
+#ifdef STEP3
+        ///////////////////
+        //     STEP 3    //
+        ///////////////////
         if ( bDrawTriangles == true ) 
-            glBegin(GL_TRIANGLES);
-        else    
-            glBegin(GL_POINTS); 
+            glBegin( GL_TRIANGLES );
+    
+            //There are lots of other fun OpenGL draw modes ! Here's a few to play with
+            //glBegin( GL_LINE_LOOP ) ; 
+            //glBegin( GL_LINES ) ; 
+            //glBegin( GL_QUADS ) ; 
+           
+        else
+#endif
+        //Our particles start out as small 1 x 1 pixel points
+        glBegin(GL_POINTS); 
         
         //Create an iterator to cycle through the vector
-        std::vector<Particle>::iterator p ; 
-        for ( p = particles.begin() ; p != particles.end() ; p++ )
+        for ( int i = 0 ; i < particles.size() ; i++ )
         {
-            ofSetColor ( p->color.r , p->color.g , p->color.b , 255 ) ; 
-            glVertex3f(p->position.x, p->position.y , 0 );
+            ofSetColor( particles[i].color ,  255 ) ; 
+            glVertex3f( particles[i].position.x , particles[i].position.y , 0 );
         }
         
         glEnd();
-    
-    //2
+
+#ifdef STEP2
+    ///////////////////
+    //     STEP 2    //
+    ///////////////////
     fbo.end() ; 
     ofSetColor ( 255 , 255 , 255 ) ; 
     fbo.draw( 0 , 0 ) ; 
+#endif
 }
 
-
+#ifdef STEP3
+///////////////////
+//     STEP 3    //
+///////////////////
 void testApp::updateParticlePixels() 
 {
     //Populate particles for the first time 
@@ -226,57 +274,21 @@ void testApp::updateParticlePixels()
             
             particleCount++ ; 
             particles[particleCount].color = color ; 
-//            particles.push_back( Particle ( ofPoint ( x + xOffset , y + yOffset ) , color ) ) ;  
         }
     }
-    
 }
+#endif
 
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
+#ifdef STEP3
+    ///////////////////
+    //     STEP 3    //
+    ///////////////////
     //Toggle drawing triangles
     if ( key == 't' || key == 'T' )
         bDrawTriangles = !bDrawTriangles ; 
-}
-
-//--------------------------------------------------------------
-void testApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
-
+#endif 
 }

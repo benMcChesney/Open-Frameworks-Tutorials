@@ -2,6 +2,10 @@
 
 #include "ofMain.h"
 
+//#define STEP2 2
+//#define STEP3 3
+//#define STEP4 4
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -19,25 +23,36 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-        /*
-        //2
+#ifdef STEP2
+        ///////////////////
+        //     STEP 2    //
+        ///////////////////
         struct colorPoint {
             ofColor color ;
             ofVec2f position ;
-            
-            //3
             float radius ; 
         } ;
     
         vector<colorPoint> points ; 
+#endif
     
-        //3
+
+#ifdef STEP3
+        ///////////////////
+        //     STEP 3    //
+        ///////////////////
         //change the radius based on the mouse movement
         float mouseDistance ; 
         //FBOs are similar to bitmapData objects in flash, they store pixels to be used on the GPU
         ofFbo mirrorFbo ;
+#endif
     
+#ifdef STEP4
+        ///////////////////
+        //     STEP 4    //
+        ///////////////////
         vector<ofColor> colorPool ; 
         ofColor getRandomColor ( ) ; 
-        */
+#endif
+    
 };
