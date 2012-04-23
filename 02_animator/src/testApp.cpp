@@ -23,7 +23,7 @@ void testApp::setup(){
     //Prevents screen tearing
     ofSetVerticalSync( true ) ; 
     ofSetFrameRate( maxFrames ) ; 
-    ofBackground( 255 , 255 , 255 ) ; 
+    ofBackground( 0 , 0, 0 ) ; 
     
 #ifdef STEP2
     ///////////////////
@@ -115,7 +115,7 @@ void testApp::draw(){
         if ( bMousePressed == true ) 
         {
 #ifndef STEP2
-            ofSetColor ( 15 , 15 , 15 ) ; 
+            ofSetColor ( 215 , 215 , 215 ) ; 
             ofCircle( mouseX , mouseY , 14.0f ) ; 
 #endif
             
@@ -150,7 +150,7 @@ void testApp::resetAllFbos()
     for ( int i = 0; i < maxFrames ; i++ ) 
     {
         frames[i].begin() ; 
-        ofSetColor( 255 , 255 , 255 ) ; 
+        ofSetColor( 0 , 0 , 0 ) ; 
         ofRect( 0 , 0 , ofGetWidth() , ofGetHeight() ) ;
         frames[i].end() ;
     }

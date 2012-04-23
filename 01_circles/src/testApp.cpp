@@ -53,11 +53,11 @@ void testApp::update(){
     ///////////////////
     //Generate a colorPoint object and fill it with data to draw
     colorPoint cp ; 
-    #ifndef STEP3
+    #ifndef STEP4
     cp.color = ofColor( ofRandom( 255 ) , ofRandom( 255 ) , ofRandom( 255 ) ) ; 
     #endif
     
-    #ifdef STEP3
+    #ifdef STEP4
     cp.color = getRandomColor() ; 
     #endif
     

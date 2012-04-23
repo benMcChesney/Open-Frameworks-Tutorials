@@ -35,30 +35,21 @@ class CustomClass : public ofBaseApp
     
         vector<float> floats ;      //dynamically sized container, in this case for objects of a "float" type
     
-     
         //method that returns a void object
         //in c++ the return type is placed in front of the method name
         void setup ( ) 
         {
             //this is the constructor
-            #ifdef superCoolNumber
-                        
-                        //cout allows you to output to the IDEs log, and sometimes the system log
-                        cout << "SuperCoolNumber is defined! " << endl ; 
-                        
+            #ifdef superCoolNumber        
+                //cout allows you to output to the IDEs log, and sometimes the system log
+                cout << "SuperCoolNumber is defined! " << endl ;         
             #endif
                         
             #ifndef superCoolNumber
-                        
-                        float negative1 = -1.000001f ; 
-                        cout << "Oh no! The superCoolNumber is *NOT* defined ! " << negative1 << endl ; 
-                        
+                float negative1 = -1.000001f ; 
+                cout << "Oh no! The superCoolNumber is *NOT* defined ! " << negative1 << endl ;                
             #endif
         }
-                                    
-    
-        
-            
 //When you create a class, be sure to add a semicolon at the end of the declaration !
 //otherwise the compiler won't know where this class start and the next one begins
 };
