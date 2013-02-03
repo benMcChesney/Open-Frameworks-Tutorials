@@ -11,30 +11,31 @@ void testApp::setup(){
     currentFrame = 0 ; 
     bMousePressed = false ; 
     
-    //For each of our max frames create push an FBO into frames
-    //then reference it by index to allocate it the size of the OF window
-    
     for ( int i = 0; i < maxFrames ; i++ ) 
     {
-        // ...
+        //Push back and allocate the screen in each Frame Buffer Object
+        frames.push_back(ofFbo() ) ; 
+        frames[i].allocate( ofGetWidth() , ofGetHeight() ) ; 
     }
     
-    //resetAllFbos( ) ;
+    resetAllFbos( ) ; 
     
     //Prevents screen tearing
     ofSetVerticalSync( true ) ; 
     ofSetFrameRate( maxFrames ) ; 
     ofBackground( 0 , 0, 0 ) ; 
     
+#ifdef STEP2
     ///////////////////
     //     STEP 2    //
     ///////////////////
-    lastMouse = ofPoint ( 0 , 0 ) ;
+    lastMouse = ofPoint ( 0 , 0 ) ; 
+#endif
     
+#ifdef STEP3
     ///////////////////
     //     STEP 3    //
     ///////////////////
-    /*
     float dim = 35 ;    //height of sliders
 	float xInit = OFX_UI_GLOBAL_WIDGET_SPACING; 
     float length = 320-xInit; 
@@ -50,19 +51,23 @@ void testApp::setup(){
     gui = new ofxUICanvas(0, 0, length+xInit, ofGetHeight());
     
     //When accessing pointers you use the "->" notation
-    gui->addWidgetDown(new ofxUILabel("AWESOME LABEL", OFX_UI_FONT_LARGE));
+    gui->addWidgetDown(new ofxUILabel("AWESOME LABEL", OFX_UI_FONT_LARGE));    
     //Setup sliders for the first Colors
-    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, red, "RED" ));
-    //complete for the other sliders...
-
+    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, red, "RED" )); 
+    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, green, "GREEN" )); 
+    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, blue, "BLUE" )); 
+    
+    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, red2, "RED2" )); 
+    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, green2, "GREEN2" )); 
+    gui->addWidgetDown(new ofxUISlider(length-xInit,dim, 0.0, 255.0, blue2, "BLUE2" )); 
     
     //Add an event listener to react to changes in the ofxUI changes
-    ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);
+    ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);	
     
     //Turn off the ofxUI rendering for now
-    gui->disable() ;
-    gui->loadSettings("ofxUISettings.xml") ;
-    */
+    gui->disable() ; 
+    gui->loadSettings("ofxUISettings.xml") ; 
+#endif
 }
 
 //--------------------------------------------------------------
@@ -83,37 +88,59 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
+#ifdef STEP2
         ///////////////////
         //     STEP 2    //
         ///////////////////
         //record the current mouse position
-        //get the distance between this position and last position
-        
+        ofPoint mousePos = ofPoint( mouseX , mouseY ) ; 
+        float mouseDistance = ofDist( mousePos.x , mousePos.y , lastMouse.x , lastMouse.y ) + 15.0f ;    
+    
+        //Simple if-else to limit the size of the radius
+        if ( mouseDistance > 35.0f ) 
+            mouseDistance = 35.0f ; 
+#endif
+    
     
         ///////////////////
         //     STEP 1    //
         ///////////////////
         ofSetColor( 255 , 255 , 255 ) ; 
         //Begin recording the FBO
+        frames[currentFrame].begin() ;         
     
-        //draw the fbo into itself
-
-        //If the mouse is pressed draw a circle at the mouse position
-        ///////////////////
-        //     STEP 2    //
-        ///////////////////
-        //draw the circle radius based on the mouse distance
+        //redraw the fbo into itself
+        frames[currentFrame].draw(0 , 0 ) ; 
+    
+        if ( bMousePressed == true ) 
+        {
+#ifndef STEP2
+            ofSetColor ( 215 , 215 , 215 ) ; 
+            ofCircle( mouseX , mouseY , 14.0f ) ; 
+#endif
+            
+#ifdef STEP2
+            ///////////////////
+            //     STEP 2    //
+            ///////////////////
+            ofSetColor ( randomColor ) ;           
+            ofCircle( mouseX , mouseY , mouseDistance ) ; 
+#endif
+        }
         
         //stop drawing into FBO
+        frames[currentFrame].end() ; 
         
         //Draw the FBO with full color
         ofSetColor ( 255 , 255 , 255 ) ; 
-        //frames[currentFrame].draw(0 , 0 ) ;
+        frames[currentFrame].draw(0 , 0 ) ;
     
+#ifdef STEP2
         ///////////////////
         //     STEP 2    //
         ///////////////////
-        //set lastMousePos to the mousePos right now
+        lastMouse = mousePos ; 
+#endif
     
 }
 
@@ -157,23 +184,25 @@ void testApp::keyPressed(int key)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
     
-    bMousePressed = true ;
-    
+    bMousePressed = true ; 
+#ifdef STEP2
     ///////////////////
     //     STEP 2    //
     ///////////////////
     //create a random color
-    randomColor = ofColor ( ofRandom ( 255 ) , ofRandom ( 255 ) , ofRandom( 255 ) ) ;
+    randomColor = ofColor ( ofRandom ( 255 ) , ofRandom ( 255 ) , ofRandom( 255 ) ) ; 
+#endif
     
+#ifdef STEP3
     ///////////////////
     //     STEP 3    //
     ///////////////////
     //If gui is open and we are clicking over it we dont want to be recording that into the FBO
-    //if ( gui->isEnabled() == true && x < 300 )
-    //    bMousePressed = false ;
-    
-    //set our cursor color to something random between our ofxUI slider values
-    
+    if ( gui->isEnabled() == true && x < 300 ) 
+        bMousePressed = false ; 
+    //set our cursor color to our ofxUI slider values
+    randomColor = ofColor( ofRandom( red , red2 ) , ofRandom( green , green2 ) , ofRandom( blue, blue2 ) ) ; 
+#endif 
     
 }
 
@@ -181,11 +210,10 @@ void testApp::mouseReleased(int x, int y, int button){
     bMousePressed = false ; 
 }
 
-
+#ifdef STEP3
 ///////////////////
 //     STEP 3    //
 ///////////////////
-/*
 void testApp::guiEvent(ofxUIEventArgs &e)
 {
     //First the name of the widget is useful
@@ -194,14 +222,42 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     if(name == "RED")
 	{
         //Since all our widgets are ofxUISlider type, we know we can cast them without trouble
-        //in c++ you case like 
-        //int myInt = (int) 34.23 ; 
+        //in flash you cast like:
+            //var int myInt = int( 34.23 ) ;  
+        //but in c++ you do 
+            //int myInt = (int) 34.23 ; 
 		ofxUISlider *slider = (ofxUISlider *) e.widget; 
 		red = slider->getScaledValue(); 
     }
-    ... repeat for all other values
- 
+    if(name == "GREEN")
+	{
+		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+		green = slider->getScaledValue(); 
+    }
+    if(name == "BLUE")
+	{
+		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+		blue = slider->getScaledValue(); 
+    }
+    
+    if(name == "RED2")
+	{
+		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+		red2 = slider->getScaledValue(); 
+    }
+    if(name == "GREEN2")
+	{
+		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+		green2 = slider->getScaledValue(); 
+    }
+    if(name == "BLUE2")
+	{
+		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+		blue2 = slider->getScaledValue(); 
+    }
+
+    
     //We can also store our settings to an external XML file ! If we want to resume our settings after the app closes
     gui->saveSettings("ofxUISettings.xml") ; 
 }
- */
+#endif

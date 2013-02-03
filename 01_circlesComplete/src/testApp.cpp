@@ -21,19 +21,20 @@ void testApp::setup(){
     //Initialize our MAX number of circles
     maxCircles = 5000 ;
 
-    ///////////////////
-    //     STEP 3    //
-    ///////////////////
+    
     //Allocate the FBO so it knows how big it's texture size is
     //we start with an FBO as big as the screen and then later we only need 1/4 of the total screen space
-    //mirrorFbo.allocate( ofGetWidth() / 2 , ofGetHeight() / 2 ) ;
+    mirrorFbo.allocate( ofGetWidth() / 2 , ofGetHeight() / 2 ) ;
     
     ///////////////////
     //     STEP 4    //
     ///////////////////
-    //To setup the color palette push 4-6 colors into colorPool
-    //colorPool.push_back( ofColor( r , g , b )  ) ;
-
+    //set the color palette , these were obtained off of adobe kuler
+    colorPool.push_back( ofColor (  255, 97, 56) ) ; 
+    colorPool.push_back( ofColor (  255, 255, 157) ) ; 
+    colorPool.push_back( ofColor (  190, 235, 159) ) ; 
+    colorPool.push_back( ofColor (  121, 189, 143) ) ; 
+    colorPool.push_back( ofColor (  0, 163, 136) ) ;
     
 }
 
@@ -51,26 +52,30 @@ void testApp::update(){
     //     STEP 2    //
     ///////////////////
     //Generate a colorPoint object and fill it with data to draw
-    /*
-     Declare a colorPoint 'cp' 
-     give cp a random color, in OF you can use ofRandom( min , max ) and ofColor( red, green blue ) 
-     give cp a position based on the mouse, in OF you have mouseX and mouseY in the testApp
-     give cp a random radius
-     
-     BONUS : use a color from a color palette instead of a random color
-    */
-    
+    colorPoint cp ;
+    cp.color = ofColor( ofRandom( 255 ) , ofRandom( 255 ) , ofRandom( 255 ) ) ;
+    cp.position = ofVec2f ( mouseX , mouseY ) ; 
+    cp.radius = ofRandom( 12 , 25 ) ; 
+
     ///////////////////
     //     STEP 3    //
     ///////////////////
-    /*
-     calcuate the distance between the mouse position last frame and this frame
-     first check to see that there is more than 1 ColorPoint, otherwise there's nothing to compare it to
-     get the position for this frames CP and last frames CP
-     get the distance between two points using ofDist( x1 , y1 , x2 , y2 )
-     set the radius of the CP to something based off of the distance
-     add the CP to points, it points.size() is larger than maxCircles call points.erase( points.begin() ) 
-     */
+    int index = points.size() - 1 ; 
+   
+    if ( index > 1 ) 
+    {
+        ofVec2f mousePos = cp.position ; 
+        ofVec2f lastMousePos = points[index-1].position ; 
+        mouseDistance = ofDist( mousePos.x, mousePos.y , lastMousePos.x , lastMousePos.y ) ; 
+        cp.radius = 1 + mouseDistance ;
+        cp.color = getRandomColor() ; 
+    }
+
+    //Add it to our vector of points and remove the oldest circle if we have too many
+    points.push_back( cp ) ; 
+    if ( points.size() > maxCircles )
+        points.erase( points.begin() ) ; 
+    
 }
 
 //--------------------------------------------------------------
@@ -80,6 +85,7 @@ void testApp::draw(){
     //     STEP 3    //
     ///////////////////
     //to record into an FBO call begin() 
+    mirrorFbo.begin() ;
     
     ///////////////////
     //     STEP 1    //
@@ -104,7 +110,8 @@ void testApp::draw(){
         ///////////////////
         //     STEP 3    //
         ///////////////////
-        //scale the FBO in HALF being drawn as it will be redrawn and flipped 4 times
+        //scale the FBO being drawn as it will be redrawn and flipped 4 times
+        ofScale ( .5f , .5f , 1 ) ;
     
         ///////////////////
         //     STEP 2    //
@@ -112,9 +119,8 @@ void testApp::draw(){
         //Iterate and draw all the circles
         for ( int i = 0 ; i < points.size() ; i++ ) 
         {
-            //set the CP color
-            //draw a circle at the CP location
-            
+            ofSetColor ( points[i].color ); 
+            ofCircle ( points[i].position.x , points[i].position.y , points[i].radius ) ; 
         }
     
     //End scaling the scene
@@ -123,27 +129,37 @@ void testApp::draw(){
     ///////////////////
     //     STEP 3    //
     ///////////////////
-    //end the FBO draw
+    //end the recording
+    mirrorFbo.end( ) ; 
     
     
     //Now we move the whole scene to the middle so the FBOs can be flipped and still drawn at 0 , 0 
     ofPushMatrix() ;
         //First 
-        //ofTranslate( screenCenter )  ;
+        ofTranslate( ofGetWidth() / 2 , ofGetHeight() / 2 )  ; 
         
         //Draw the FBO at full color
-        //ofSetColor ( 255 , 255 , 255 ) ;
-        //Draw top left
-    
-        //Flip in the X axis
-        //Draw top right
+        ofSetColor ( 255 , 255 , 255 ) ; 
+        //Top left
+        mirrorFbo.draw( 0 , 0 ) ; 
         
-        //Flip in the Y axis
-        //Bottom Left    
-     
-        //Flip in the X + Y axis
+        //Top right
+        ofPushMatrix() ; 
+            ofScale( -1 , 1 , 1 ) ; 
+            mirrorFbo.draw( 0 , 0 ) ; 
+        ofPopMatrix() ;
+        
+        //Bottom Left
+        ofPushMatrix() ; 
+            ofScale( 1 , -1 , 1 ) ; 
+            mirrorFbo.draw( 0 , 0 ) ; 
+        ofPopMatrix() ; 
+        
         //Bottom Right
-
+        ofPushMatrix() ; 
+            ofScale( -1 , -1 , 1 ) ; 
+            mirrorFbo.draw( 0 , 0 ) ; 
+        ofPopMatrix() ; 
     ofPopMatrix() ;
     
 }
@@ -153,9 +169,8 @@ void testApp::draw(){
 ///////////////////
 ofColor testApp::getRandomColor( ) 
 {
-    //Get a random color index between 0 and colorPool.size()
-    //return a color from within colorPool with that index
-    return ofColor() ;
+    int randomIndex = ofRandom ( colorPool.size() ) ; 
+    return colorPool[ randomIndex ] ; 
 }
 
 //--------------------------------------------------------------

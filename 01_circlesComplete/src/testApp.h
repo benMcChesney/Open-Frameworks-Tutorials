@@ -22,13 +22,10 @@ class testApp : public ofBaseApp{
         ///////////////////
         //     STEP 2    //
         ///////////////////
-     
         struct colorPoint {
-            
-            /*
-             Create a struct called "colorPoint" and give the values for a :
-             color , position , and radius
-             */
+            ofColor color ;
+            ofVec2f position ;
+            float radius ; 
         } ;
     
         //Keep all our points a vector a dynamically sized array
