@@ -1,17 +1,64 @@
-# Unity3D .gitignore file.
-#	 Store this file at the root of your local repository.
-.DS_Store
-Library/AssetImportState
-Library/AssetServerCacheV3
-Library/FailedAssetImports.txt
-Library/ScriptAssemblies
-Library/ScriptMapper
-Library/assetDatabase3
-Library/cache
-Library/expandedItems
-Library/metadata
-Library/previews
-Library/guidmapper
-Temp
-*.pidb
-build
+
+.svn/
+obj/
+bin/
+build/
+!data/
+ipch/
+
+# mac Finder index files
+.DS_*
+
+# mac apps
+*.app*
+
+# xcode user project files
+*.pbxuser
+*.perspectivev3
+xcuserdata
+*.mode1*v3
+
+# codeblocks project files
+*.depend
+*.layout
+
+# visual studio project files
+*.vcxproj.user
+*.suo
+*.sdf
+
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
