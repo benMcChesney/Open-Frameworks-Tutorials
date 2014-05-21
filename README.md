@@ -7,7 +7,9 @@ http://www.slideshare.net/benDesigning/hacking-the-kinect-with-gaffta-day-1
 Project files support
 * xcode on OSX
 * visual studio 2012 on Windows 7/8
-================================
+
+---------------------------------
+
 
 00_basics is an example of basic class structure
 
