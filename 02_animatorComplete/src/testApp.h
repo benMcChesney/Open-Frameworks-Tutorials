@@ -1,13 +1,13 @@
 #pragma once
 
 
-//#define STEP2 2
-//#define STEP3 3
+#define STEP2 2
+#define STEP3 3
 
 #include "ofMain.h"
 
 #ifdef STEP3
-#include "ofxUI.h"
+#include "ofxGui.h"
 #endif
 
 class testApp : public ofBaseApp{
@@ -19,7 +19,9 @@ class testApp : public ofBaseApp{
 
 		void keyPressed  (int key);
 		void mousePressed(int x, int y, int button);
-        void mouseReleased( int x , int y , int button ) ; 
+        void mouseReleased( int x , int y , int button ) ;
+        void exit( ) ;
+    
         int maxFrames ;             //total frames to loop
         int currentFrame ;          //current index
     
@@ -40,12 +42,19 @@ class testApp : public ofBaseApp{
         ///////////////////
         //     STEP 3    //
         ///////////////////
-        ofxUICanvas *gui;           //the "*" notation specifys a pointer which holds a reference 
-                                    //Pointers require a more indepth discussion but for now that's all you need
-        
-        void guiEvent(ofxUIEventArgs &e);       //event handler for GUI events
-        float red, green, blue;     //First Color
-        float red2, green2, blue2; 	//Second Color
+        bool bShowGui ; 
+        ofxPanel gui;                      
+        ofParameter<ofColor> color1;
+        ofParameter<ofColor> color2;
+    
+        ofxButton saveSettingsButton;
+        ofxButton loadSettingsButton;
+    
+        void color1Changed(ofColor & color);
+        void color2Changed(ofColor & color);
+    
+    
+
 #endif
 		
 };

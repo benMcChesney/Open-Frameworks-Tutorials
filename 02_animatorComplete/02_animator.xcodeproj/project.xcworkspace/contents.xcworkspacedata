@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:circles.xcodeproj">
+      location = "self:02_animator.xcodeproj">
    </FileRef>
 </Workspace>
