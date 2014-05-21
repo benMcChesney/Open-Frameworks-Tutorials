@@ -18,14 +18,19 @@ void testApp::setup(){
     
     //ofSetVerticalSync forces vertical sync which prevents screentearing
     ofSetVerticalSync( true ) ;
+    
+#ifdef STEP2
     //Initialize our MAX number of circles
     maxCircles = 5000 ;
-
+#endif
     
+#ifdef STEP3
     //Allocate the FBO so it knows how big it's texture size is
     //we start with an FBO as big as the screen and then later we only need 1/4 of the total screen space
     mirrorFbo.allocate( ofGetWidth() / 2 , ofGetHeight() / 2 ) ;
-    
+#endif
+
+#ifdef STEP4
     ///////////////////
     //     STEP 4    //
     ///////////////////
@@ -35,6 +40,8 @@ void testApp::setup(){
     colorPool.push_back( ofColor (  190, 235, 159) ) ; 
     colorPool.push_back( ofColor (  121, 189, 143) ) ; 
     colorPool.push_back( ofColor (  0, 163, 136) ) ;
+    bDragging = false;
+#endif
     
 }
 
@@ -48,6 +55,7 @@ void testApp::update(){
     //OF also has a string conversion utility ofToString( ) 
     ofSetWindowTitle( ofToString( ofGetFrameRate() ) ) ; 
     
+#ifdef STEP2
     ///////////////////
     //     STEP 2    //
     ///////////////////
@@ -55,8 +63,10 @@ void testApp::update(){
     colorPoint cp ;
     cp.color = ofColor( ofRandom( 255 ) , ofRandom( 255 ) , ofRandom( 255 ) ) ;
     cp.position = ofVec2f ( mouseX , mouseY ) ; 
-    cp.radius = ofRandom( 12 , 25 ) ; 
-
+    cp.radius = ofRandom( 12 , 25 ) ;
+#endif
+    
+#ifdef STEP3
     ///////////////////
     //     STEP 3    //
     ///////////////////
@@ -68,24 +78,40 @@ void testApp::update(){
         ofVec2f lastMousePos = points[index-1].position ; 
         mouseDistance = ofDist( mousePos.x, mousePos.y , lastMousePos.x , lastMousePos.y ) ; 
         cp.radius = 1 + mouseDistance ;
-        cp.color = getRandomColor() ; 
+        cp.color = ofColor( ofRandom( 255 ) , ofRandom( 255 ) , ofRandom( 255 ) ) ;
+    #ifdef STEP4
+        cp.color = getRandomColor() ;
+    #endif
     }
-
+#endif
+    
+#ifdef STEP2
     //Add it to our vector of points and remove the oldest circle if we have too many
-    points.push_back( cp ) ; 
-    if ( points.size() > maxCircles )
-        points.erase( points.begin() ) ; 
+    #ifndef STEP4
+        points.push_back( cp ) ;
+    #endif
+        
+    #ifdef STEP4
+        if ( bDragging == true )
+            points.push_back( cp ) ;
+
+    #endif
+        if ( points.size() > maxCircles )
+            points.erase( points.begin() ) ; 
+#endif
     
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
     
+#ifdef STEP3
     ///////////////////
     //     STEP 3    //
     ///////////////////
     //to record into an FBO call begin() 
     mirrorFbo.begin() ;
+#endif
     
     ///////////////////
     //     STEP 1    //
@@ -107,12 +133,15 @@ void testApp::draw(){
         //Now we draw a circle
         ofCircle ( mouseX , mouseY , 25 ) ; 
 
+#ifdef STEP3
         ///////////////////
         //     STEP 3    //
         ///////////////////
         //scale the FBO being drawn as it will be redrawn and flipped 4 times
         ofScale ( .5f , .5f , 1 ) ;
+#endif
     
+#ifdef STEP2
         ///////////////////
         //     STEP 2    //
         ///////////////////
@@ -122,16 +151,17 @@ void testApp::draw(){
             ofSetColor ( points[i].color ); 
             ofCircle ( points[i].position.x , points[i].position.y , points[i].radius ) ; 
         }
+#endif
     
     //End scaling the scene
     ofPopMatrix() ; 
     
+#ifdef STEP3
     ///////////////////
     //     STEP 3    //
     ///////////////////
     //end the recording
-    mirrorFbo.end( ) ; 
-    
+    mirrorFbo.end( ) ;
     
     //Now we move the whole scene to the middle so the FBOs can be flipped and still drawn at 0 , 0 
     ofPushMatrix() ;
@@ -161,9 +191,11 @@ void testApp::draw(){
             mirrorFbo.draw( 0 , 0 ) ; 
         ofPopMatrix() ; 
     ofPopMatrix() ;
+#endif
     
 }
 
+#ifdef STEP4
 ///////////////////
 //     STEP 4    //
 ///////////////////
@@ -172,6 +204,7 @@ ofColor testApp::getRandomColor( )
     int randomIndex = ofRandom ( colorPool.size() ) ; 
     return colorPool[ randomIndex ] ; 
 }
+#endif
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
@@ -184,14 +217,19 @@ void testApp::keyPressed(int key){
         //if upper or lower case C was pressed down on the keyboard
         case 'c':
         case 'C':
-            //reset points
-            points.clear() ; 
+           
+#ifdef STEP2
+             //reset points
+            points.clear() ;
+#endif
+            
+#ifdef STEP3
             //draw a black rectangle over the FBO to reset it's appearence
             mirrorFbo.begin() ; 
                 ofSetColor ( 0 , 0, 0 ) ; 
                 ofRect( 0 , 0 , ofGetWidth() , ofGetHeight() ) ; 
             mirrorFbo.end() ; 
-
+#endif
             break ; 
     }
     
@@ -214,12 +252,16 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+#ifdef STEP4
+    bDragging = true ;
+#endif
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-
+#ifdef STEP4
+    bDragging = false ;
+#endif
 }
 
 //--------------------------------------------------------------
