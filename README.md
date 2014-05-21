@@ -1,4 +1,9 @@
-List of Examples for Open Frameworks
+Open Frameworks Tutorials for Beginners
+================================
+
+Slideshare presentation available here : 
+http://www.slideshare.net/benDesigning/hacking-the-kinect-with-gaffta-day-1
+
 
 00_basics is an example of basic class structure
 
@@ -13,7 +18,7 @@ List of Examples for Open Frameworks
 02_Animator
 1 ) allocate each FBO 
 2 ) on mousePressed draw into FBO
-3 ) add ofxUI and to make some fun sliders and stuff
+3 ) add ofxGui and to make some fun sliders and stuff
 
 03_Particles
 1) create particles from a loaded image
