@@ -30,15 +30,22 @@ void testApp::setup(){
     //     STEP 2    //
     ///////////////////
     //Set the spring parameters
-    forceRadius = 45 ; 
-    friction = 0.85 ; 
-    springFactor = 0.12 ; 
+    gui.setup("03 Particles Panel" ) ;
+    gui.add( forceRadius.set( "force radius" , 45 , 0.0f , 150.0f ) ) ;
+    gui.add( friction.set( "friction" , 0.85f , 0.0f , 1.0f ) ) ;
+    gui.add( springFactor.set( "spring factor" , 0.12f , 0.0f , 1.0f ) ) ;
+    gui.add( fboFade.set( "fbo fade" , 15.0f , 0.0f , 255.0f ) ) ;
     
-    fbo.allocate ( ofGetWidth() , ofGetHeight() ) ; 
-    ofClear( 0 , 0 , 0, 1 ) ; 
+    fbo.allocate ( ofGetWidth() , ofGetHeight() ) ;
+    //Do this to clear the frame buffer object of "garbage" left in memory
+    fbo.begin() ;
+        ofClear( 0 , 0 , 0, 1 ) ;
+    fbo.end() ;
+    
 #endif
 
 #ifdef STEP3
+#ifndef STEP4
     ///////////////////
     //     STEP 3    //
     ///////////////////
@@ -50,14 +57,28 @@ void testApp::setup(){
     createParticlesFromPixels( video.getPixelsRef() ) ; 
     bDrawTriangles = false ; 
 #endif
+#endif
+        
+#ifdef STEP4
+    ///////////////////
+    //     STEP 4    //
+    ///////////////////
+    //Use a live webcam instead of a video
+    vidGrabber.listDevices() ;
+    vidGrabber.initGrabber( 480 , 320 ) ;
+    vidGrabber.videoSettings() ;
+    
+    createParticlesFromPixels( vidGrabber.getPixelsRef() ) ;
+     bDrawTriangles = false ; 
+#endif
 }
 
 void testApp::createParticlesFromPixels ( ofPixels pix )
 {
     int w = pix.getWidth() ; 
     int h = pix.getHeight() ;
-    
-    unsigned char * pixels = pix.getPixels() ; 
+
+    unsigned char * pixels = pix.getPixels() ;
     //offsets to center the particles on screen
     int xOffset = (ofGetWidth() - w ) /2 ;
     //We're drawing the actual video too so we'll bump down where the video pixels are drawn too
@@ -137,14 +158,26 @@ void testApp::update()
 #endif
     
 #ifdef STEP3
+#ifndef STEP4
     ///////////////////
     //     STEP 3    //
     ///////////////////
     // We have to manually update the video ! It doesn't know to update itself
     video.update() ; 
-    updateParticlePixels() ; 
+    updateParticlePixels( video.getPixelsRef() ) ;
+#endif
 #endif
     
+#ifdef STEP4
+    ///////////////////
+    //     STEP 4    //
+    ///////////////////
+    // We have to manually update the video ! It doesn't know to update itself
+    vidGrabber.update() ;
+    //if ( vidGrabber.isFrameNew() )
+        updateParticlePixels( vidGrabber.getPixelsRef() ) ;
+#endif
+   
 }
 
 
@@ -153,9 +186,15 @@ void testApp::update()
 void testApp::draw()
 {
 
+     ofSetColor( ofColor::white )  ;
 #ifdef STEP3
-    ofSetColor( ofColor::white )  ; 
-    video.draw ( ofGetWidth() / 2 + video.getWidth() / -2 , 25 ) ; 
+#ifndef STEP4
+    video.draw ( ofGetWidth() / 2 + video.getWidth() / -2 , 25 ) ;
+#endif
+#endif
+    
+#ifdef STEP4
+    vidGrabber.draw( ofGetWidth() / 2 + vidGrabber.getWidth() / -2 , 25) ;
 #endif
     
     //Begin the openGL Drawing Mode
@@ -168,11 +207,12 @@ void testApp::draw()
     ///////////////////
     fbo.begin() ;    
         //to get the trail effect we draw a very faint rectangle the size of the screen and the color of the background
-        ofSetColor( 0 , 0 , 0, 6 ) ; 
+        ofSetColor( 0 , 0 , 0, fboFade ) ;
         ofRect( 0 , 0 , ofGetWidth() , ofGetHeight() ) ;  
 #endif
     
 #ifdef STEP3
+    
         ///////////////////
         //     STEP 3    //
         ///////////////////
@@ -204,27 +244,31 @@ void testApp::draw()
     ///////////////////
     fbo.end() ; 
     ofSetColor ( 255 , 255 , 255 ) ; 
-    fbo.draw( 0 , 0 ) ; 
+    fbo.draw( 0 , 0 ) ;
+    
+    gui.draw( ) ;
 #endif
+    
+ 
 }
 
 #ifdef STEP3
 ///////////////////
 //     STEP 3    //
 ///////////////////
-void testApp::updateParticlePixels() 
+void testApp::updateParticlePixels( ofPixels pix )
 {
     //Populate particles for the first time 
     //store width and height for optimization and clarity
-    int w = video.width  ; 
-    int h = video.height ;
+    int w = pix.getWidth()  ;
+    int h = pix.getHeight() ;
     
     
     //offsets to center the particles on screen
     int xOffset = (ofGetWidth() - w ) /2 ; 
     int yOffset = (ofGetHeight() - h ) /2 ;
     
-    unsigned char * pixels = video.getPixels() ;
+    unsigned char * pixels = pix.getPixels() ; 
     
     int particleCount = 0 ; 
     

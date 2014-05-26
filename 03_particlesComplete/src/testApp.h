@@ -2,9 +2,11 @@
 
 #include "ofMain.h"
 #include "Particle.h"
+#include "ofxGui.h"
 
 //#define STEP2 2
 //#define STEP3 3
+//#define STEP4 4
 
 class testApp : public ofBaseApp{
 
@@ -25,11 +27,14 @@ class testApp : public ofBaseApp{
 #ifdef STEP2
         ///////////////////
         //     STEP 2    //
-        ///////////////////
-        float forceRadius ;             //radius of repellent/attraction force
-        float friction ;                //damping to slow the particles down
-        float springFactor ;            //how much the particle "springs" back to it's origin   
-        ofFbo fbo ;                     //Let's add in some alpha trails for things to get awesome
+        ///////////////////         
+        ofFbo fbo ;                         
+        ofxPanel gui;
+        ofParameter<float> fboFade ;        //Let's add in some alpha trails for things to get awesome
+        ofParameter<float> forceRadius ;    //radius of repellent/attraction force
+        ofParameter<float> friction ;       //damping to slow the particles down
+        ofParameter<float> springFactor ;   //how much the particle "springs" back to it's origin   
+    
 #endif
     
 #ifdef STEP3
@@ -37,9 +42,12 @@ class testApp : public ofBaseApp{
         //     STEP 3    //
         ///////////////////
         ofVideoPlayer video ;           //OF has a core video player that's based off of quicktime or gstreamer
-        void updateParticlePixels() ;   //Special method to update the pixel color from the video
-        bool bDrawTriangles ;           //OPENGL drawing modes can have very different results
+        void updateParticlePixels( ofPixels pix ) ;   //Special method to update the pixel color from the video
+        ofParameter<bool> bDrawTriangles ;           //OPENGL drawing modes can have very different results
 #endif
 		
+#ifdef STEP4
+        ofVideoGrabber vidGrabber ;
+#endif 
     
 };
