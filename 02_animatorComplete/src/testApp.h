@@ -1,8 +1,8 @@
 #pragma once
 
 
-#define STEP2 2
-#define STEP3 3
+//#define STEP2 2
+//#define STEP3 3
 
 #include "ofMain.h"
 
