@@ -4,9 +4,9 @@
 #include "Particle.h"
 #include "ofxGui.h"
 
-//#define STEP2 2
-//#define STEP3 3
-//#define STEP4 4
+#define STEP2 2
+#define STEP3 3
+#define STEP4 4
 
 class testApp : public ofBaseApp{
 

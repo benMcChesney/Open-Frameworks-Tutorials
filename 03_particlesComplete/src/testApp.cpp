@@ -193,10 +193,6 @@ void testApp::draw()
 #endif
 #endif
     
-#ifdef STEP4
-    vidGrabber.draw( ofGetWidth() / 2 + vidGrabber.getWidth() / -2 , 25) ;
-#endif
-    
     //Begin the openGL Drawing Mode
     //this will draw a small point at each vertex we define
      ofEnableAlphaBlending() ; 
@@ -245,6 +241,10 @@ void testApp::draw()
     fbo.end() ; 
     ofSetColor ( 255 , 255 , 255 ) ; 
     fbo.draw( 0 , 0 ) ;
+    
+#ifdef STEP4
+    vidGrabber.draw( ofGetWidth() / 2 + vidGrabber.getWidth() / -2 , 25) ;
+#endif
     
     gui.draw( ) ;
 #endif
