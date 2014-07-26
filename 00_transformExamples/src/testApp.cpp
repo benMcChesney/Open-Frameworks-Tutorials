@@ -21,12 +21,12 @@ void testApp::draw()
     //sin ( ofGetElapsedTimef() ) cycles between -1 and 1 .
     float amount = ( sin ( ofGetElapsedTimef() ) + 1.0f ) / 2.0f ;
     
-    
     //Translate
     ofDrawBitmapStringHighlight("Translate", 25 , 20 ) ;
     ofPushMatrix();
         //Move it away from the edge a bit
         ofTranslate( 25 , 125 ) ;
+       
         ofSetColor( ofColor::red ) ;
         ofCircle( 0 , 0 , 15 ) ;
     
@@ -44,6 +44,10 @@ void testApp::draw()
     ofDrawBitmapStringHighlight("Rotate", 350 , 20 ) ;
     ofPushMatrix() ;
         ofTranslate( 350 , 125 ) ;
+    
+        ofSetColor( 255 ) ;
+        ofCircle( 0 , 0, 15 ) ;
+    
         int numItems = 12 ;
         float anglePer = 360.0f / (float) numItems ;
         
@@ -52,6 +56,7 @@ void testApp::draw()
             ofSetColor( ofColor::fromHsb( i * 35.0f , 255.0f , 255.0f ) ) ;
             ofPushMatrix() ;
                 ofRotate( anglePer * (float)i * amount ) ;
+            
                 ofRect( -10 , 0 , 20 , 60 ) ; 
             ofPopMatrix() ;
         }
